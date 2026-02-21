@@ -14,9 +14,12 @@ from .serializers import (
     WritingSessionSerializer,
     ParagraphSerializer,
     EnhancementLogSerializer,
-    EnhanceParagraphSerializer
+    EnhanceParagraphSerializer,
 )
-from .services.ml_client import analyze_text_with_ml
+from rest_framework.views import APIView
+from .services.ml_client import call_generate, call_writer, call_analyze
+from .serializers import GenerateSerializer, WriterSerializer
+
 
 
 # ------------------------
@@ -104,6 +107,8 @@ class EnhanceParagraphView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
 
         paragraph_id = serializer.validated_data["paragraph_id"]
+        tone = serializer.validated_data["tone"]
+        level = serializer.validated_data["level"]
 
         try:
             paragraph = Paragraph.objects.get(
@@ -113,22 +118,21 @@ class EnhanceParagraphView(CreateAPIView):
         except Paragraph.DoesNotExist:
             return Response({"error": "Paragraph not found"}, status=404)
 
-        # Call ML service
-        ml_result = analyze_text_with_ml(
-            paragraph.content,
-            paragraph.session.id
+        ml_result = call_analyze(
+            text=paragraph.content,
+            session_id=paragraph.session.id,
+            tone=tone,
+            level=level
         )
 
         if "error" in ml_result:
             return Response(ml_result, status=500)
 
-        # Update Paragraph metrics
         paragraph.drift_score = ml_result.get("drift_score")
         paragraph.consistency_score = ml_result.get("consistency_score")
         paragraph.emotion = ml_result.get("emotion")
         paragraph.save()
 
-        # Save enhancement log
         EnhancementLog.objects.update_or_create(
             paragraph=paragraph,
             defaults={
@@ -142,7 +146,6 @@ class EnhanceParagraphView(CreateAPIView):
 
         return Response(ml_result)
 
-
 # ------------------------
 # ENHANCEMENT RETRIEVE
 # ------------------------
@@ -155,3 +158,92 @@ class RetrieveEnhancementView(RetrieveAPIView):
         return EnhancementLog.objects.filter(
             paragraph__session__user=self.request.user
         )
+    
+
+class GenerateScriptView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+
+        serializer = GenerateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        session_id = serializer.validated_data["session_id"]
+
+        try:
+            session = WritingSession.objects.get(
+                id=session_id,
+                user=request.user
+            )
+        except WritingSession.DoesNotExist:
+            return Response({"error": "Session not found"}, status=404)
+
+        ml_result = call_generate(**serializer.validated_data)
+
+        if "error" in ml_result:
+            return Response(ml_result, status=500)
+
+        Paragraph.objects.create(
+            session=session,
+            content=ml_result.get("generated_text"),
+            drift_score=ml_result.get("drift_score"),
+            consistency_score=ml_result.get("consistency_score"),
+            emotion=ml_result.get("emotion")
+        )
+
+        return Response(ml_result)
+
+class WriterView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+
+        serializer = WriterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        session_id = serializer.validated_data["session_id"]
+
+        try:
+            session = WritingSession.objects.get(
+                id=session_id,
+                user=request.user
+            )
+        except WritingSession.DoesNotExist:
+            return Response({"error": "Session not found"}, status=404)
+
+        ml_result = call_writer(**serializer.validated_data)
+
+        if "error" in ml_result:
+            return Response(ml_result, status=500)
+
+        if ml_result.get("mode") == "enhancement":
+
+            paragraph = Paragraph.objects.create(
+                session=session,
+                content=serializer.validated_data["user_input"],
+                drift_score=ml_result.get("drift_score"),
+                consistency_score=ml_result.get("consistency_score"),
+                emotion=ml_result.get("emotion")
+            )
+
+            EnhancementLog.objects.update_or_create(
+                paragraph=paragraph,
+                defaults={
+                    "original_text": serializer.validated_data["user_input"],
+                    "enhanced_text": ml_result.get("enhanced_text"),
+                    "explanation": ml_result.get("explanation"),
+                    "readability_before": ml_result.get("readability_before"),
+                    "readability_after": ml_result.get("readability_after"),
+                }
+            )
+
+        else:
+            Paragraph.objects.create(
+                session=session,
+                content=ml_result.get("generated_text"),
+                drift_score=ml_result.get("drift_score"),
+                consistency_score=ml_result.get("consistency_score"),
+                emotion=ml_result.get("emotion")
+            )
+
+        return Response(ml_result)        

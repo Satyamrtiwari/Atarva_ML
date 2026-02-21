@@ -1,99 +1,45 @@
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-import torch
+# ml_service/models/style_model.py
 
-device = torch.device("cpu")
+import os
+from groq import Groq
 
-tokenizer = AutoTokenizer.from_pretrained("Vamsi/T5_Paraphrase_Paws")
-model = AutoModelForSeq2SeqLM.from_pretrained("Vamsi/T5_Paraphrase_Paws").to(device)
 
-def rewrite_formal(text: str):
+def rewrite_with_llm(text: str, tone: str, level: str):
 
-    prompt = "paraphrase: " + text + " </s>"
+    api_key = os.getenv("GROQ_API_KEY")
 
-    encoding = tokenizer(
-        prompt,
-        padding="longest",
-        max_length=256,
-        truncation=True,
-        return_tensors="pt"
-    ).to(device)
+    # Safety fallback
+    if not api_key or api_key.strip() == "":
+        print("⚠ GROQ_API_KEY missing in rewrite_with_llm")
+        return text
 
-    with torch.no_grad():
-        outputs = model.generate(
-            input_ids=encoding.input_ids,
-            attention_mask=encoding.attention_mask,
-            max_length=256,
-            do_sample=True,
-            top_k=50,
-            top_p=0.95,
-            temperature=1.2,
-            num_return_sequences=1
+    try:
+        client = Groq(api_key=api_key)
+
+        prompt = f"""
+Rewrite the following text.
+
+Tone: {tone}
+Enhancement level: {level}
+
+Preserve original meaning.
+
+Text:
+{text}
+"""
+
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system", "content": "Professional writing assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=400
         )
 
-    rewritten = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        return response.choices[0].message.content.strip()
 
-    return rewritten.strip()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#     from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-# import torch
-
-# device = torch.device("cpu")
-
-# tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-base")
-# model = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-base").to(device)
-
-# def rewrite_formal(text: str):
-
-#     prompt = (
-#         "Rewrite the following text in a clear, formal, and professional academic tone. "
-#         "Improve vocabulary and structure while preserving meaning:\n\n"
-#         f"{text}"
-#     )
-
-#     inputs = tokenizer(
-#         prompt,
-#         return_tensors="pt",
-#         truncation=True,
-#         max_length=512
-#     ).to(device)
-
-#     with torch.no_grad():
-#         outputs = model.generate(
-#             **inputs,
-#             max_length=256,
-#             num_beams=4,
-#             length_penalty=1.0,
-#             early_stopping=True
-#         )
-
-#     rewritten = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-#     return rewritten
+    except Exception as e:
+        print("⚠ LLM rewrite error:", str(e))
+        return text

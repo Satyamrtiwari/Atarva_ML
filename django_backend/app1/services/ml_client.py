@@ -1,16 +1,54 @@
 import requests
 
-ML_SERVICE_URL = "http://127.0.0.1:8001/analyze"
+BASE_ML_URL = "http://127.0.0.1:8001"
 
-def analyze_text_with_ml(text, session_id):
+
+def call_analyze(text, session_id, tone, level):
     try:
         response = requests.post(
-            ML_SERVICE_URL,
+            f"{BASE_ML_URL}/analyze",
             json={
                 "text": text,
-                "session_id": session_id
+                "session_id": session_id,
+                "tone": tone,
+                "level": level
             },
-            timeout=60
+            timeout=120
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        return {"error": str(e)}
+
+
+def call_generate(session_id, prompt, genre, tone, length):
+    try:
+        response = requests.post(
+            f"{BASE_ML_URL}/generate",
+            json={
+                "session_id": session_id,
+                "prompt": prompt,
+                "genre": genre,
+                "tone": tone,
+                "length": length
+            },
+            timeout=180
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        return {"error": str(e)}
+
+
+def call_writer(session_id, user_input):
+    try:
+        response = requests.post(
+            f"{BASE_ML_URL}/writer",
+            json={
+                "session_id": session_id,
+                "user_input": user_input
+            },
+            timeout=180
         )
         response.raise_for_status()
         return response.json()

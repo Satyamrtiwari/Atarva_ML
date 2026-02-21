@@ -55,5 +55,28 @@ class EnhancementLogSerializer(serializers.ModelSerializer):
 
 
 
+from rest_framework import serializers
+
 class EnhanceParagraphSerializer(serializers.Serializer):
     paragraph_id = serializers.IntegerField()
+    tone = serializers.ChoiceField(
+        choices=["formal", "casual", "academic", "storyteller", "technical", "persuasive"],
+        default="formal"
+    )
+    level = serializers.ChoiceField(
+        choices=["low", "medium", "high"],
+        default="medium"
+    )
+
+
+class GenerateSerializer(serializers.Serializer):
+    session_id = serializers.IntegerField()
+    prompt = serializers.CharField()
+    genre = serializers.CharField(default="general")
+    tone = serializers.CharField(default="storyteller")
+    length = serializers.CharField(default="medium")
+
+
+class WriterSerializer(serializers.Serializer):
+    session_id = serializers.IntegerField()
+    user_input = serializers.CharField()    
