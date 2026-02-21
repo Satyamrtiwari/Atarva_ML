@@ -52,3 +52,8 @@ class EnhancementLogSerializer(serializers.ModelSerializer):
         model = EnhancementLog
         fields = "__all__"
         read_only_fields = ["created_at"]
+
+
+
+class EnhanceParagraphSerializer(serializers.Serializer):
+    paragraph_id = serializers.IntegerField()

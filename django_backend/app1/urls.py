@@ -8,6 +8,7 @@ from .views import (
     DeleteSessionView,
     CreateParagraphView,
     ListParagraphView,
+    EnhanceParagraphView,
     RetrieveEnhancementView
 )
 
@@ -28,5 +29,6 @@ urlpatterns = [
     path("paragraph/list/<int:session_id>/", ListParagraphView.as_view()),
 
     # Enhancement
+    path("enhance/", EnhanceParagraphView.as_view()),
     path("enhancement/<int:pk>/", RetrieveEnhancementView.as_view()),
 ]
