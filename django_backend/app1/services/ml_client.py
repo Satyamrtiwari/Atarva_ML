@@ -44,18 +44,17 @@ def call_generate(session_id, prompt, genre, tone, length,
         return {"error": str(e)}
 
 
-def call_writer(session_id, user_input,
-                target_words=None, target_sentences=None):
+def call_writer(session_id, user_input, **kwargs):
 
     try:
+        payload = {
+            "session_id": session_id,
+            "user_input": user_input,
+            **kwargs
+        }
         response = requests.post(
             f"{BASE_ML_URL}/writer",
-            json={
-                "session_id": session_id,
-                "user_input": user_input,
-                "target_words": target_words,
-                "target_sentences": target_sentences
-            },
+            json=payload,
             timeout=180
         )
         response.raise_for_status()

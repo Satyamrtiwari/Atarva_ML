@@ -63,6 +63,10 @@ const WriterWorkspace = () => {
             const res = await writerAPI({
                 session_id: sessionId,
                 user_input: currentInput,
+                mode: options.mode,
+                tone: options.tone,
+                level: options.level,
+                genre: options.genre,
                 target_words: parseInt(options.wordCount) || 300
             });
 

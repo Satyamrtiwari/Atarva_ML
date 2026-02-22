@@ -226,7 +226,7 @@ class WriterView(APIView):
 
             paragraph = Paragraph.objects.create(
                 session=session,
-                content=serializer.validated_data["user_input"],
+                content=ml_result.get("enhanced_text") or serializer.validated_data["user_input"],
                 drift_score=ml_result.get("drift_score"),
                 consistency_score=ml_result.get("consistency_score"),
                 emotion=ml_result.get("emotion")
@@ -246,7 +246,7 @@ class WriterView(APIView):
         else:
             Paragraph.objects.create(
                 session=session,
-                content=ml_result.get("generated_text"),
+                content=ml_result.get("generated_text") or serializer.validated_data["user_input"],
                 drift_score=ml_result.get("drift_score"),
                 consistency_score=ml_result.get("consistency_score"),
                 emotion=ml_result.get("emotion")
