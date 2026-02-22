@@ -46,6 +46,14 @@ def call_generate(session_id, prompt, genre, tone, length,
 
 def call_writer(session_id, user_input, **kwargs):
 
+    language = kwargs.get("language", "english").lower()
+    
+    # Simple prompt injection to handle translation in 5 mins
+    if language == "hindi":
+        user_input = f"[OUTPUT IN HINDI] {user_input}"
+    elif language != "english":
+        user_input = f"[OUTPUT IN {language.upper()}] {user_input}"
+
     try:
         payload = {
             "session_id": session_id,
