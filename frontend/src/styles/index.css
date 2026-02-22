@@ -24,6 +24,15 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-premium-gradient;
   }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 /* Custom animations */
