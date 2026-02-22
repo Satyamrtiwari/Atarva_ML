@@ -24,7 +24,8 @@ const WriterWorkspace = () => {
         tone: 'storyteller',
         level: 'medium',
         genre: 'general',
-        wordCount: '300'
+        wordCount: '300',
+        language: 'english'
     });
 
     useEffect(() => {
@@ -67,6 +68,7 @@ const WriterWorkspace = () => {
                 tone: options.tone,
                 level: options.level,
                 genre: options.genre,
+                language: options.language,
                 target_words: parseInt(options.wordCount) || 300
             });
 
@@ -276,6 +278,18 @@ const WriterWorkspace = () => {
                                 <option value="formal">Formal</option>
                                 <option value="casual">Casual</option>
                                 <option value="technical">Technical</option>
+                            </select>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0 border-l border-white/5 pl-2 ml-2">
+                            <span className="text-[10px] font-bold text-premium-gradient uppercase tracking-widest px-2 group">Language</span>
+                            <select
+                                value={options.language}
+                                onChange={(e) => setOptions({ ...options, language: e.target.value })}
+                                className="bg-white/10 border border-purple-500/30 rounded-xl text-xs py-1.5 px-3 outline-none focus:border-purple-500 cursor-pointer font-bold text-purple-200"
+                            >
+                                <option value="english">English (US)</option>
+                                <option value="hindi">Hindi (हिन्दी)</option>
                             </select>
                         </div>
                     </div>

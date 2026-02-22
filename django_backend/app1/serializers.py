@@ -86,6 +86,7 @@ class WriterSerializer(serializers.Serializer):
     tone = serializers.CharField(default="storyteller")
     level = serializers.CharField(default="medium")
     genre = serializers.CharField(default="general")
+    language = serializers.CharField(default="english")
 
     target_words = serializers.IntegerField(required=False)
     target_sentences = serializers.IntegerField(required=False)
