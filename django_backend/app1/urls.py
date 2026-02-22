@@ -12,6 +12,7 @@ from .views import (
     RetrieveEnhancementView,
     GenerateScriptView,
     WriterView,
+    StatsView,
 )
 
 urlpatterns = [
@@ -33,7 +34,11 @@ urlpatterns = [
     # Enhancement
     path("enhance/", EnhanceParagraphView.as_view()),
     path("enhancement/<int:pk>/", RetrieveEnhancementView.as_view()),
+    
     # AI
     path("generate/", GenerateScriptView.as_view()),
     path("writer/", WriterView.as_view()),
+    
+    # Stats
+    path("stats/", StatsView.as_view()),
 ]

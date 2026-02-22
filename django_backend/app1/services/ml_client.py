@@ -13,7 +13,7 @@ def call_analyze(text, session_id, tone, level):
                 "tone": tone,
                 "level": level
             },
-            timeout=120
+            timeout=180
         )
         response.raise_for_status()
         return response.json()

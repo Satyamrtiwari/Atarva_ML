@@ -26,8 +26,8 @@ class WritingSessionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WritingSession
-        fields = "__all__"
-        read_only_fields = ["user", "created_at"]
+        fields = ["id", "title", "created_at"]
+        read_only_fields = ["id", "created_at"]
 
 
 # ------------------------

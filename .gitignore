@@ -13,3 +13,5 @@ node_modules/
 
 # HuggingFace cache
 .cache/
+
+frontend/dist/

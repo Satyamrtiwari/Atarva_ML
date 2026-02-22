@@ -21,7 +21,6 @@ from .services.ml_client import call_generate, call_writer, call_analyze
 from .serializers import GenerateSerializer, WriterSerializer
 
 
-
 # ------------------------
 # AUTH VIEWS
 # ------------------------
@@ -45,7 +44,14 @@ class CreateSessionView(CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        print(f"DEBUG: Creating session for user: {self.request.user}")
+        print(f"DEBUG: Data: {self.request.data}")
+        try:
+            serializer.save(user=self.request.user)
+            print("DEBUG: Session created successfully")
+        except Exception as e:
+            print(f"DEBUG: Error creating session: {str(e)}")
+            raise e
 
 
 class ListSessionView(ListAPIView):
@@ -246,4 +252,19 @@ class WriterView(APIView):
                 emotion=ml_result.get("emotion")
             )
 
-        return Response(ml_result)        
+        return Response(ml_result)
+
+class StatsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        paragraphs_count = Paragraph.objects.filter(session__user=request.user).count()
+        enhancements_count = EnhancementLog.objects.filter(paragraph__session__user=request.user).count()
+        sessions_count = WritingSession.objects.filter(user=request.user).count()
+        
+        return Response({
+            "total_paragraphs": paragraphs_count,
+            "total_enhancements": enhancements_count,
+            "total_sessions": sessions_count,
+            "ai_operations": paragraphs_count + enhancements_count
+        })
