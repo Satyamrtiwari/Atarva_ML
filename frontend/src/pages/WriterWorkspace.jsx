@@ -232,12 +232,12 @@ const WriterWorkspace = () => {
                                     <select
                                         value={options.genre}
                                         onChange={(e) => setOptions({ ...options, genre: e.target.value })}
-                                        className="bg-white/5 border border-white/5 rounded-xl text-xs py-1.5 px-3 outline-none focus:border-purple-500/50 cursor-pointer"
+                                        className="bg-white/5 border border-white/5 rounded-xl text-xs py-1.5 px-3 outline-none focus:border-purple-500/50 cursor-pointer text-white"
                                     >
-                                        <option value="general">General</option>
-                                        <option value="sci-fi">Sci-Fi</option>
-                                        <option value="noir">Noir</option>
-                                        <option value="drama">Drama</option>
+                                        <option value="general" className="bg-slate-900 text-white">General</option>
+                                        <option value="sci-fi" className="bg-slate-900 text-white">Sci-Fi</option>
+                                        <option value="noir" className="bg-slate-900 text-white">Noir</option>
+                                        <option value="drama" className="bg-slate-900 text-white">Drama</option>
                                     </select>
                                 </div>
                                 <div className="flex items-center gap-2 shrink-0">
@@ -257,11 +257,11 @@ const WriterWorkspace = () => {
                                     <select
                                         value={options.level}
                                         onChange={(e) => setOptions({ ...options, level: e.target.value })}
-                                        className="bg-white/5 border border-white/5 rounded-xl text-xs py-1.5 px-3 outline-none focus:border-purple-500/50 cursor-pointer"
+                                        className="bg-white/5 border border-white/5 rounded-xl text-xs py-1.5 px-3 outline-none focus:border-purple-500/50 cursor-pointer text-white"
                                     >
-                                        <option value="low">Subtle</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="high">Complex</option>
+                                        <option value="low" className="bg-slate-900 text-white">Subtle</option>
+                                        <option value="medium" className="bg-slate-900 text-white">Medium</option>
+                                        <option value="high" className="bg-slate-900 text-white">Complex</option>
                                     </select>
                                 </div>
                             </>
@@ -272,12 +272,12 @@ const WriterWorkspace = () => {
                             <select
                                 value={options.tone}
                                 onChange={(e) => setOptions({ ...options, tone: e.target.value })}
-                                className="bg-white/5 border border-white/5 rounded-xl text-xs py-1.5 px-3 outline-none focus:border-purple-500/50 cursor-pointer"
+                                className="bg-white/5 border border-white/5 rounded-xl text-xs py-1.5 px-3 outline-none focus:border-purple-500/50 cursor-pointer text-white"
                             >
-                                <option value="storyteller">Storyteller</option>
-                                <option value="formal">Formal</option>
-                                <option value="casual">Casual</option>
-                                <option value="technical">Technical</option>
+                                <option value="storyteller" className="bg-slate-900 text-white">Storyteller</option>
+                                <option value="formal" className="bg-slate-900 text-white">Formal</option>
+                                <option value="casual" className="bg-slate-900 text-white">Casual</option>
+                                <option value="technical" className="bg-slate-900 text-white">Technical</option>
                             </select>
                         </div>
 
@@ -288,8 +288,8 @@ const WriterWorkspace = () => {
                                 onChange={(e) => setOptions({ ...options, language: e.target.value })}
                                 className="bg-white/10 border border-purple-500/30 rounded-xl text-xs py-1.5 px-3 outline-none focus:border-purple-500 cursor-pointer font-bold text-purple-200"
                             >
-                                <option value="english">English (US)</option>
-                                <option value="hindi">Hindi (हिन्दी)</option>
+                                <option value="english" className="bg-slate-900 text-white">English (US)</option>
+                                <option value="hindi" className="bg-slate-900 text-white">Hindi (हिन्दी)</option>
                             </select>
                         </div>
                     </div>

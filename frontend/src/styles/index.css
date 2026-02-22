@@ -33,6 +33,11 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Global Dropdown Fix */
+  select option {
+    @apply bg-slate-900 text-white !important;
+  }
 }
 
 /* Custom animations */
