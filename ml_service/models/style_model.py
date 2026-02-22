@@ -8,7 +8,6 @@ def rewrite_with_llm(text: str, tone: str, level: str):
 
     api_key = os.getenv("GROQ_API_KEY")
 
-    # Safety fallback
     if not api_key or api_key.strip() == "":
         print("⚠ GROQ_API_KEY missing in rewrite_with_llm")
         return text
@@ -23,6 +22,7 @@ Tone: {tone}
 Enhancement level: {level}
 
 Preserve original meaning.
+Do not change the length drastically.
 
 Text:
 {text}

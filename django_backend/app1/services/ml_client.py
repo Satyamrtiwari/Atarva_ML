@@ -21,7 +21,9 @@ def call_analyze(text, session_id, tone, level):
         return {"error": str(e)}
 
 
-def call_generate(session_id, prompt, genre, tone, length):
+def call_generate(session_id, prompt, genre, tone, length,
+                  target_words=None, target_sentences=None):
+
     try:
         response = requests.post(
             f"{BASE_ML_URL}/generate",
@@ -30,7 +32,9 @@ def call_generate(session_id, prompt, genre, tone, length):
                 "prompt": prompt,
                 "genre": genre,
                 "tone": tone,
-                "length": length
+                "length": length,
+                "target_words": target_words,
+                "target_sentences": target_sentences
             },
             timeout=180
         )
@@ -40,13 +44,17 @@ def call_generate(session_id, prompt, genre, tone, length):
         return {"error": str(e)}
 
 
-def call_writer(session_id, user_input):
+def call_writer(session_id, user_input,
+                target_words=None, target_sentences=None):
+
     try:
         response = requests.post(
             f"{BASE_ML_URL}/writer",
             json={
                 "session_id": session_id,
-                "user_input": user_input
+                "user_input": user_input,
+                "target_words": target_words,
+                "target_sentences": target_sentences
             },
             timeout=180
         )

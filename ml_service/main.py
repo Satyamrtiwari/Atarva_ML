@@ -21,14 +21,10 @@ app = FastAPI(title="AI-Powered Writer API")
 
 
 # ============================
-# TEXT CLEANER (NEW ADDITION)
+# TEXT CLEANER
 # ============================
 
 def clean_text(text: str) -> str:
-    """
-    Removes newline characters and extra spaces.
-    Keeps text clean for frontend display.
-    """
     return " ".join(text.replace("\n", " ").split())
 
 
@@ -49,6 +45,7 @@ class ScriptRequest(BaseModel):
     genre: str = "general"
     tone: str = "storyteller"
     length: str = "medium"
+    target_words: int | None = None
 
 
 class WriterRequest(BaseModel):
@@ -57,7 +54,7 @@ class WriterRequest(BaseModel):
 
 
 # ============================
-# CONTENT ENHANCEMENT ENDPOINT
+# ENHANCEMENT ENDPOINT
 # ============================
 
 @app.post("/analyze")
@@ -71,7 +68,6 @@ def analyze_content(data: EnhancementRequest):
         data.level
     )
 
-    # CLEAN OUTPUT
     enhanced_text = clean_text(enhanced_text)
 
     readability_after = analyze_readability(enhanced_text)
@@ -116,10 +112,10 @@ def generate_content(data: ScriptRequest):
     generated_text = generate_script(
         plan,
         data.tone,
-        data.length
+        data.length,
+        data.target_words
     )
 
-    # CLEAN OUTPUT
     generated_text = clean_text(generated_text)
 
     consistency = analyze_consistency(
@@ -143,7 +139,7 @@ def generate_content(data: ScriptRequest):
 
 
 # ============================
-# AUTO INTELLIGENT ROUTER
+# AUTO ROUTER
 # ============================
 
 @app.post("/writer")

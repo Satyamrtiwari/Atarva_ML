@@ -76,7 +76,12 @@ class GenerateSerializer(serializers.Serializer):
     tone = serializers.CharField(default="storyteller")
     length = serializers.CharField(default="medium")
 
+    target_words = serializers.IntegerField(required=False)
+    target_sentences = serializers.IntegerField(required=False)
 
 class WriterSerializer(serializers.Serializer):
     session_id = serializers.IntegerField()
-    user_input = serializers.CharField()    
+    user_input = serializers.CharField()
+
+    target_words = serializers.IntegerField(required=False)
+    target_sentences = serializers.IntegerField(required=False)
